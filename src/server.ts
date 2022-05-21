@@ -2,11 +2,12 @@ import express, { Request } from "express";
 import bodyParser from "body-parser";
 import fileUpload from "express-fileupload"
 import Q from "q";
-import { appendFile, existsSync, fstat, mkdirSync, unlink, writeFile } from "fs";
+import { appendFile, existsSync, fstat, mkdirSync, readFile, readFileSync, unlink, writeFile } from "fs";
 import path from "path";
 const app = express();
 import keys from "./keys.json";
-
+import defaults from "../json/defaults.json"
+const { descriptions, names } = defaults
 function getTime(date) {
     const rawDate = new Date(date);
     return `${rawDate.getDate()}/${rawDate.getMonth()}/${rawDate.getFullYear()}`
@@ -18,31 +19,6 @@ const config = {
     "url": "https://feather.saige.wtf"
 }
 
-const names = [
-    "Saige 👋",
-    "You're a qt ;)",
-    "Love youu",
-    "You're the best!",
-    "Logging ips rn /j",
-    "~> Saigees/Feather",
-    "woah this is cool",
-    "~> Saige#0934"
-]
-
-const descriptions = [
-    "I love women!!",
-    "Kanna is cute",
-    "Hazel is cute",
-    "boop!",
-    "beep!",
-    "*you can click the title above to see my portfolio :)*",
-    "currently being demotivated",
-    "i love cats",
-    "[twitter @ Saigeees](https://saige.wtf/twitter)",
-    "Homework folder: 874GB",
-    "IP: [127.0.0.1](https://saige.wtf)",
-    `Date ~> ${getTime(Date.now())}`
-]
 
 const colour = ["#6E49AB", "#FF65B2"][Math.floor(Math.random() * ["#6E49AB", "#FF65B2"].length)];
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -58,10 +34,16 @@ app.use(fileUpload({
 app.use('/raw/', express.static(config.imageUrl));
 app.use('/d/', express.static("json/"));
 app.use(express.static(config.imageUrl))
+app.get("/", (req, res) => res.redirect("https://saige.wtf"))
 app.get('/:id', (req, res) => {
-    if (!req.params.id) return res.send({ notice: "no id" })
-    let description = req.query.d || descriptions[Math.floor(Math.random() * descriptions.length)]
-    let name = req.query.n || names[Math.floor(Math.random() * names.length)]
+    if (!req.params.id) return res.redirect("https://saige.wtf")
+    let data: any = readFileSync(`${process.cwd()}/json/uploads/${req.params.id}.json`, { encoding: "utf8" })
+    data = JSON.parse(data)
+    const { name, description } = data as {
+        description: string;
+        name: string;
+    }
+    console.log(data)
     res.send(`<!DOCTYPE html>
 <html>
 <head>
@@ -99,6 +81,7 @@ function id(length: number = 35) {
 app.post("/upload", (req, res) => {
     //@ts-ignore
     const files = req.files
+    const { desc, name } = req.body;
     const authorization = req.query.key as string | undefined;
     if (!authorization || !keys.includes(authorization)) {
         return res.status(200).json({
@@ -112,6 +95,14 @@ app.post("/upload", (req, res) => {
     const file = files.image
     const uniqueFilePath = Q.defer();
     const fileName = id(15);
+
+    const jsonData = {
+        description: desc || descriptions[Math.floor(Math.random() * descriptions.length)],
+        name: name || names[Math.floor(Math.random() * names.length)],
+        imageName: `${fileName}${path.extname(file.name)}`,
+        id: fileName
+    }
+
     //@ts-ignore
     uniqueFilePath.resolve({ name: `${fileName}${path.extname(file.name)}`, path: path.join(config.imageUrl, `${fileName}${path.extname(file.name)}`) })
     uniqueFilePath.promise.then((p: { name: string, path: string }) => {
@@ -122,6 +113,10 @@ app.post("/upload", (req, res) => {
             url: `${config.url}/${fileName}`,
             delete_url: `${config.url}/delete/${fileName}`
         })
+    })
+
+    appendFile(`${process.cwd()}/json/uploads/${fileName}.json`, JSON.stringify(jsonData), (e) => {
+        if (e) console.log(e)
     })
 })
 
@@ -143,7 +138,7 @@ app.get("/delete/:id", (req, res) => {
     }
 
     const exists = existsSync(`${process.cwd()}/uploads/${req.params.id
-}.png`)
+        }.png`)
     if (!exists) return res.status(400).send({
         success: false,
         error: {
