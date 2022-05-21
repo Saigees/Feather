@@ -43,7 +43,6 @@ app.get('/:id', (req, res) => {
         description: string;
         name: string;
     }
-    console.log(data)
     res.send(`<!DOCTYPE html>
 <html>
 <head>
@@ -52,7 +51,7 @@ app.get('/:id', (req, res) => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>filler</title>
     <meta content="${name}" property="og:title" />
-    <meta content="${description}" property="og:description" />
+    <meta content="${description.replace("{{date}}", `${getTime(Date.now())}`)}" property="og:description" />
     <meta content="https://saige.wtf" property="og:url" />
     <meta content="${config.url}/${req.params.id}.png" property="og:image" />
     <meta name="twitter:card" content="summary_large_image"/>
