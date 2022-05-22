@@ -35,6 +35,7 @@ app.use(fileUpload({
 
 app.use('/raw/', express.static(config.imageUrl));
 app.use('/d/', express.static("json/"));
+app.use('/~/', express.static("raw/"));
 app.use(express.static(config.imageUrl))
 app.get("/", (req, res) => res.redirect("https://saige.wtf"))
 app.get('/:id', (req, res) => {
@@ -171,6 +172,11 @@ function reloadKeys(amount: number = 15) {
 
     writeFile(`${__dirname}/keys.json`, JSON.stringify(keys), (e) => { console.log(e) })
 }
+
+const keysExist = existsSync(`${__dirname}/keys.json`)
+if (!keysExist) {
+    reloadKeys()
+} 
 
 // Delete files after desinated time, not in use currently
 // setInterval(async () => {
