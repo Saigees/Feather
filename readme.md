@@ -8,6 +8,7 @@ an next-gen image uploader built to be used with [sharex](https://getsharex.com/
 ### To get started ( IN ORDER ) ~ Hosting
 
 ~ `npm i`<br/>
+~ `npm run dev` (to create keys)<br/>
 ~ `npm run start` (fill out the info)<br/>
 ~ `open the created "install.sxcu" file with sharex`<br/>
 ~ DEV: `npm run dev`<br/>
