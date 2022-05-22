@@ -3,6 +3,9 @@ const keys = require("./dist/src/keys.json")
 const key = keys[0];
 const ps = require("prompt-sync")();
 
+if (!keys || key.lengthn < 1 || !key) {
+  console.log('Please run the project once in dev or the built version (npm run build & node dist/src/server.js) before generating the installer')
+} 
 const title = ps("Please enter an embed title: ")
 const desc = ps("Please enter an embed description: ");
 console.log(
