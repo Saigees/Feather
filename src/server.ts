@@ -7,6 +7,10 @@ import path from "path";
 const app = express();
 import keys from "./keys.json";
 import defaults from "../json/defaults.json"
+import glob from "glob"
+import { promisify  } from "util";
+
+const globP = promisify(glob)
 const { descriptions, names } = defaults
 function getTime(date) {
     const rawDate = new Date(date);
@@ -16,7 +20,8 @@ function getTime(date) {
 const config = {
     "fileSizeLimit": 52428800,
     "imageUrl": "uploads/",
-    "url": "https://feather.saige.wtf"
+    "url": "https://feather.saige.wtf",
+    "fileExpiresInMs": 1000 * 10 //* 60 * 60 * 24 * 7
 }
 
 
@@ -167,6 +172,16 @@ function reloadKeys(amount: number = 15) {
 
     writeFile(`${__dirname}/keys.json`, JSON.stringify(keys), (e) => { console.log(e) })
 }
+
+// Delete files after desinated time, not in use currently
+// setInterval(async () => {
+//     const files: string[] = await globP(`${process.cwd()}/uploads/*{.png,.jpg}`)
+//     const file = files[0];
+//     if (!file) return;
+//     const jsonFileName = file.split("/uploads/")[1].replace(".png", ".json")
+//     unlink(`${process.cwd()}/json/uploads/${jsonFileName}`, (e) => { if(e) console.log(e)})
+//     unlink(file, (e) => { if(e) console.log(e) })
+// }, config.fileExpiresInMs)
 
 app.listen(8006, () => {
     console.log(`Listening to port 8006 | http://localhost:8006 : https://feather.saige.wtf`)
