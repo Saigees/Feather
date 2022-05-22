@@ -5,6 +5,9 @@ const ps = require("prompt-sync")();
 
 const title = ps("Please enter an embed title: ")
 const desc = ps("Please enter an embed description: ");
+console.log(
+  'Notice: If you wish to use this on localhost, please use "127.0.0.1" instead of "localhost"'
+);
 const url = ps("Please enter the url that this will be running on: ");
 if (!url) { 
     console.log("Please supply an valid url!")

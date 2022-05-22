@@ -20,7 +20,7 @@ function getTime(date) {
 const config = {
     "fileSizeLimit": 52428800,
     "imageUrl": "uploads/",
-    "url": "https://feather.saige.wtf",
+    "url": "http://127.0.0.1:8006",
     "fileExpiresInMs": 1000 * 10 //* 60 * 60 * 24 * 7
 }
 
@@ -31,9 +31,6 @@ app.use(bodyParser.json())
 app.use(fileUpload({
     safeFileNames: true,
     preserveExtension: true,
-    limits: {
-        fileSize: config.fileSizeLimit
-    }
 }));
 
 app.use('/raw/', express.static(config.imageUrl));
@@ -48,6 +45,8 @@ app.get('/:id', (req, res) => {
         description: string;
         name: string;
     }
+
+
     res.send(`<!DOCTYPE html>
 <html>
 <head>
@@ -58,7 +57,7 @@ app.get('/:id', (req, res) => {
     <meta content="${name}" property="og:title" />
     <meta content="${description.replace("{{date}}", `${getTime(Date.now())}`)}" property="og:description" />
     <meta content="https://saige.wtf" property="og:url" />
-    <meta content="${config.url}/${req.params.id}.png" property="og:image" />
+    <meta content="${config.url}/${req.params.id}${data.fileType}" property="og:image" />
     <meta name="twitter:card" content="summary_large_image"/>
     <meta content="${colour}" data-react-helmet="true" name="theme-color" />
     <link type="application/json+oembed" href="https://feather.saige.wtf/d/embed.json" />
@@ -99,14 +98,14 @@ app.post("/upload", (req, res) => {
     const file = files.image
     const uniqueFilePath = Q.defer();
     const fileName = id(15);
-
+    const fileType = path.extname(file.name);
     const jsonData = {
         description: desc || descriptions[Math.floor(Math.random() * descriptions.length)],
         name: name || names[Math.floor(Math.random() * names.length)],
         imageName: `${fileName}${path.extname(file.name)}`,
-        id: fileName
+        id: fileName,
+        fileType
     }
-
     //@ts-ignore
     uniqueFilePath.resolve({ name: `${fileName}${path.extname(file.name)}`, path: path.join(config.imageUrl, `${fileName}${path.extname(file.name)}`) })
     uniqueFilePath.promise.then((p: { name: string, path: string }) => {
@@ -140,9 +139,8 @@ app.get("/delete/:id", (req, res) => {
             delete_url: `https://saige.wtf`
         })
     }
-
-    const exists = existsSync(`${process.cwd()}/uploads/${req.params.id
-        }.png`)
+    const exists = existsSync(`${process.cwd()}/json/uploads/${req.params.id
+        }.json`)
     if (!exists) return res.status(400).send({
         success: false,
         error: {
@@ -150,8 +148,9 @@ app.get("/delete/:id", (req, res) => {
             fix: `supply an actual file id 😭`
         }
     })
-
-    unlink(`${process.cwd()}/uploads/${req.params.id}.png`, (e) => {
+    let data: any = readFileSync(`${process.cwd()}/json/${req.params.id}.json`, {encoding: "utf8"})
+    data = JSON.parse(data)
+    unlink(`${process.cwd()}/uploads/${req.params.id}${data.fileType}`, (e) => {
         console.log(e)
         if (e) return res.status(400).send({
             success: false,
