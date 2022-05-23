@@ -44,14 +44,19 @@ app.get('/:id', async (req, res) => {
     if (!req.params.id || !existsSync(`${process.cwd()}/src/json_uploads/${req.params.id}.json`)) return res.redirect("https://saige.wtf")
     let data: any = readFileSync(`${process.cwd()}/src/json_uploads/${req.params.id}.json`, { encoding: "utf8" })
     data = JSON.parse(data)
-    const { name, description, color, hostUrl, authorText, raw, fileType } = data as {
+    const { name, description, color, hostUrl, topText, raw, fileType, provider_name, provider_url } = data as {
         description: string;
         name: string;
         color: string;
         hostUrl: string;
-        authorText: string;
+        topText: string;
         raw: boolean;
+        provider_name: string;
+        provider_url: string;
         fileType: ".gif" | ".png" | string;
+    }
+    if (provider_url === "none") {
+        delete data['provider_url']
     }
     if (!raw) {
         res.send(`<!DOCTYPE html>
@@ -60,15 +65,23 @@ app.get('/:id', async (req, res) => {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${await format(authorText.slice(35), data)}</title>
+    <title>${await format(topText.slice(35), data)}</title>
+    ${name !== "none" ? `
     <meta content="${await format(name, data)}" property="og:title" />
-    <meta content="${await format(description, data)}" property="og:description" />
-    <meta content="${await format(authorText, data)}" property="og:site_name">
+    ` : ""}
+    ${description !== "none" ? `
+    <meta content="${await format(description, data)}" property="og:description" />`: ""}
+    ${topText !== "none" ? `
+    <meta content="${await format(topText, data)}" property="og:site_name">
+    ` : ""}
+    ${hostUrl !== "none" ? `
     <meta content="${hostUrl}" property="og:url" />
+    `: ""}
     <meta content="${config.url}/${req.params.id}${data.fileType}" property="og:image" />
     <meta name="twitter:card" content="summary_large_image"/>
     <meta content="${color}" data-react-helmet="true" name="theme-color" />
-    <link type="application/json+oembed" href="https://i.saige.wtf/~/json/embed.json" />
+    ${provider_name !== "none" ? `
+    <link type="application/json+oembed" href="${process.cwd() + "/src/json_uploads/" + req.params.id + ".json"} " />` : ""}
 </head>
 <body>
 powered by <a href="https://saige.wtf">saige.wtf</a>
@@ -76,7 +89,7 @@ powered by <a href="https://saige.wtf">saige.wtf</a>
 <script>window.location.href = "https://github.com/Saigees/Feather"</script>
 </html>`)
     } else {
-        res.send(`${process.cwd()}/uploads / ${req.params.id}${data.fileType}`)
+        res.send(`${process.cwd()}/uploads/${req.params.id}${data.fileType}`)
     }
 })
 
@@ -101,8 +114,8 @@ app.post("/upload", (req, res) => {
 
     //@ts-ignore
     const files = req.files
-    const { desc, name, color, url, authorText, raw } = req.body;
-    let hostUrl = url || "https://saige.wtf"
+    const { desc, name, color, url, topText, raw, authorName, authorUrl } = req.body;
+    let hostUrl = url || "none"
     const authorization = req.query.key as string | undefined;
     if (!authorization || !keys.includes(authorization)) {
         return res.status(200).json({
@@ -120,15 +133,17 @@ app.post("/upload", (req, res) => {
     const fileType = path.extname(file.name);
 
     const jsonData = {
-        description: desc || descriptions[Math.floor(Math.random() * descriptions.length)],
-        name: name || names[Math.floor(Math.random() * names.length)],
+        description: desc || "none",
+        name: name || "none",
         color: color || colours[colour[Math.floor(Math.random() * colour.length)]],
         imageName: `${fileName}${path.extname(file.name)}`,
         id: fileName,
         fileType,
         createdDate: Date.now(),
         hostUrl,
-        authorText: authorText || "powered by saige.wtf",
+        provider_name: authorName || "none",
+        provider_url: authorUrl || "none",
+        topText: topText || "none",
         raw: raw === "true" ? true : false || false
     }
 
