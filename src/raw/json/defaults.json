@@ -1,0 +1,67 @@
+{
+  "names": [
+    "You're a qt ;)",
+    "Love youu",
+    "You're the best!",
+    "Logging ips rn /j",
+    "woah this is cool"
+  ],
+  "descriptions": [
+    "I love women!!",
+    "Kanna is cute",
+    "Hazel is cute",
+    "boop!",
+    "beep!",
+    "you can click the title above to see feathers own :3",
+    "currently being demotivated",
+    "i love cats",
+    "Homework folder: 874GB",
+    "IP: 127.0.0.1",
+    "Date ~> {{date}}"
+  ],
+  "colours": {
+    "RED": "#ffadad",
+    "ORANGE": "#ffd6a5",
+    "YELLOW": "#fdffb6",
+    "GREEN": "#caffbf",
+    "LIGHT_BLUE": "#bde0fe",
+    "BLUE": "#a2d2ff",
+    "PURPLE": "#bdb2ff",
+    "PINK": "#ffc6ff",
+    "WHITE": "#FFFFFF",
+    "BLACK": "#000000",
+
+    "SUNRISE_5": "#f08080",
+    "SUNRISE_4": "#f4978e",
+    "SUNRISE_3": "#f8ad9d",
+    "SUNRISE_2": "#fbc4ab",
+    "SUNRISE_1": "#ffdab9",
+
+    "SKY_1": "#edf2fb",
+    "SKY_2": "#e2eafc",
+    "SKY_3": "#d7e3fc",
+    "SKY_4": "#ccdbfd",
+    "SKY_5": "#c1d3fe",
+    "SKY_6": "#b6ccfe",
+    "SKY_7": "#abc4ff",
+
+    "DISCORD_BLURPLE": "#5865F2",
+    "DISCORD_GREEN": "#57F287",
+    "DISCORD_YELLOW": "#FEE75C",
+    "DISCORD_PINK": "#EB459E",
+    "DISCORD_RED": "#ED4245",
+
+    "PURPLE_1": "#e5d9f2",
+    "PURPLE_2": "#cdc1ff",
+    "PURPLE_3": "#a594f9",
+    "PURPLE_4": "#7371fc",
+
+    "MISC_PINK_RED": "#f48498",
+    "MISC_PASTEL_RED": "#e78f8e",
+    "MISC_LIGHT_PINK": "#e7cee3",
+
+    "SKIN_LIGHT": "#e7d1c9",
+    "SKIN_DARK": "#d0b49f",
+    "SKIN_PALE": "#f1e7dd"
+  }
+}
