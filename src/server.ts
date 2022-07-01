@@ -19,14 +19,7 @@ export function getTime(date) {
     return `${rawDate.getDate()}/${rawDate.getMonth()}/${rawDate.getFullYear()}`
 }
 
-const config = {
-    "fileSizeLimit": 52428800,
-    "imageUrl": "uploads/",
-    "url": "http://127.0.0.1:8006",
-    "imageJsonUrl": "src/json_uploads/",
-    "fileExpiresInMs": 1000 * 10 * 60 * 60 * 24 * 7
-}
-
+const config = require("./config.json");
 
 const colour = Object.keys(colours)
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -207,30 +200,6 @@ app.get("/delete/:id", (req, res) => {
     res.redirect("https://saige.wtf")
 })
 
-function reloadKeys(amount: number = 15) {
-    const keys = []
-    for (let i = 0; i < 15; i++) {
-        keys.push(id(55))
-    };
-
-    writeFile(`${__dirname}/keys.json`, JSON.stringify(keys), (e) => { console.log(e) })
-}
-
-const keysExist = existsSync(`${__dirname}/keys.json`)
-if (!keysExist) {
-    reloadKeys()
-}
-// Delete files after they advance over 1 week expiration date, used for when it releases to the public
-// setInterval(async () => {
-//     const files: string[] = await globP(`${process.cwd()}/src/json_uploads/*.json`)
-//     files.forEach(async (filePath) => {
-//         const file = await (await import(filePath)).default
-//         const diff = Date.now() - file.createdDate;
-//         if (!(diff >= (1000 * 60 * 60 * 24 * 7))) return;
-//         unlink(filePath, (e) => { if (e) console.log(e) })
-//         unlink(`${process.cwd()}/uploads/${file.imageName}`, (e) => { if (e) console.log(e) })
-//     })
-// }, config.fileExpiresInMs)
 
 
 app.get("/*", (req, res) => { res.redirect("https://saige.wtf") })

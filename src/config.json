@@ -1,0 +1,6 @@
+{
+    "fileSizeLimit": 52428800,
+    "imageUrl": "uploads/",
+    "url": "http://127.0.0.1:8006",
+    "imageJsonUrl": "src/json_uploads/"
+}

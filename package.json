@@ -24,6 +24,7 @@
   "scripts": {
     "dev": "ts-node src/server.ts",
     "build": "tsc",
-    "start": "npm run build && node setup.js"
+    "start": "npm run build && node setup.js",
+    "first": "node first_start.js"
   }
 }
