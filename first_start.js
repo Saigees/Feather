@@ -1,4 +1,4 @@
-const { mkdirSync } = require("fs");
+const { mkdirSync, writeFile, writeFileSync, existsSync } = require("fs");
 
 function id(length = 35) {
   let str = "";
@@ -10,22 +10,26 @@ function id(length = 35) {
   return str;
 }
 
-function reloadKeys(amount = 15) {
-  const keys = [];
-  for (let i = 0; i < 15; i++) {
-    keys.push(id(55));
-  }
+const keys = [];
+for (let i = 0; i < 5; i++) {
+  keys.push(id(55));
+}
 
-  writeFile(`${process.cwd()}/src/keys.json`, JSON.stringify(keys), (e) => {
-    console.log(e);
+writeFileSync(`${process.cwd()}/src/keys.json`, JSON.stringify(keys), (e) => {
+  console.log(e);
+});
+
+if (!existsSync(`${process.cwd()}/src/json_uploads/`)) {
+    mkdirSync(`${process.cwd()}/src/json_uploads`, (e) => {
+      if (e) console.log(e);
+    });
+
+
+}
+if (!existsSync(`${process.cwd()}/uploads/`)) {
+  mkdirSync(`${process.cwd()}/uploads`, (e) => {
+    if (e) console.log(e);
   });
 }
 
-reloadKeys(5)
-
-mkdirSync(`${process.cwd()}/uploads`, (e) => {
-  if (e) console.log(e);
-});
-mkdirSync(`${process.cwd()}/src/json_uploads`, (e) => {if(e) console.log(e)});
-
-process.exit(0)
+process.exit(0);

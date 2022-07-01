@@ -5,7 +5,7 @@ import Q from "q";
 import { appendFile, existsSync, fstat, mkdirSync, readFile, readFileSync, statSync, unlink, writeFile } from "fs";
 import path from "path";
 const app = express();
-import keys from "./keys.json";
+
 import defaults from "./raw/json/defaults.json"
 import glob from "glob"
 import { promisify } from "util";
@@ -103,6 +103,7 @@ function id(length: number = 35) {
     return str;
 }
 
+import keys from "./keys.json";
 app.post("/upload", (req, res) => {
 
     //@ts-ignore
